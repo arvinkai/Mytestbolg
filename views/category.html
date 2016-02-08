@@ -3,10 +3,16 @@
 </head>
 <body>
 	{{template "navbar" .}}
+
+<div class="container">
+<h1>分类列表</h1>
 	<form method="Get" action="/category" class="form-search">
-		<input type="hidden" name="op" value="add">
-		<li><input type="text" id="category" class="input-medium search-query"></li>
-		<li><button type="submit" class="btn" onclick="return checkInput()">add</button></li>
+		<div class="form-group">
+			<label>分类名称</label>
+			<input type="hidden" name="op" value="add">
+			<input type="text" id="name" class="form-control" name="name">
+		</div>
+		<button type="submit" class="btn" onclick="return checkInput();">添加</button>
 	</form>
 
 	<script type="text/javascript">
@@ -36,9 +42,16 @@
 			<th>{{.Title}}</th>
 			<th>{{.TopicCount}}</th>
 			<th>
-				<a href="/category?op=del&id={{.Id}}"></a>
+				<a href="/category?op=del&id={{.Id}}">删除</a>
 			</th>
+			{{end}}
 		</tbody>
 	</table>
+</div>
+	
+	
+
+	<script type="text/javascript" src="http://cdn.staticfile.org/jquery/3.0.0-alpha1/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@
             <div class="pull-right">
                 <ul class="nav ">
                     {{if .IsLogin}}
-                    <button  class="btn" onclick="return exitAccount()">退出</button>
+                    <button  class="btn" onclick="return exitAccount();">退出</button>
                     <script type="text/javascript">
                     function exitAccount(){
                         window.location.href = "/exit";
