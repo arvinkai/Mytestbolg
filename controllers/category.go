@@ -11,6 +11,7 @@ type CategoryController struct {
 }
 
 func (this *CategoryController) Get() {
+	this.Data["IsLogin"] = checkAccount(this.Ctx)
 	op := this.Input().Get("op")
 
 	switch op {

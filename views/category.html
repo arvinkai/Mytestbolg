@@ -17,7 +17,7 @@
 
 	<script type="text/javascript">
 	function checkInput(){
-		var category = document.getElementById("category")
+		var category = document.getElementById("name")
 		if (category.value.length == 0) {
 			alert("请输入内容");
 			return false;
@@ -38,12 +38,22 @@
 		
 		<tbody>
 			{{range .Categories}}
-			<th>{{.Id}}</th>	
-			<th>{{.Title}}</th>
-			<th>{{.TopicCount}}</th>
-			<th>
-				<a href="/category?op=del&id={{.Id}}">删除</a>
-			</th>
+				<tr>
+					<td>{{.Id}}</td>	
+					<td>{{.Title}}</td>
+					<td>{{.TopicCount}}</td>
+					<td>
+						<a href="/category?op=del&id={{.Id}}">删除</a>
+					</td>
+				<!--
+					<th>{{.Id}}</th>	
+					<th>{{.Title}}</th>
+					<th>{{.TopicCount}}</th>
+					<th>
+						<a href="/category?op=del&id={{.Id}}">删除</a>
+					</th>
+					-->
+				</tr>
 			{{end}}
 		</tbody>
 	</table>
