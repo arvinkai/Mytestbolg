@@ -125,3 +125,81 @@ func GetAllTopics(isDesc bool) ([]*Topic, error) {
 
 	return Topics, err
 }
+
+func GetTopic(uId string) (*Topic, error) {
+	nId, err := strconv.ParseInt(uId, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	o := orm.NewOrm()
+
+	qs := o.QueryTable("topic")
+
+	topic := new(Topic)
+	err = qs.Filter("id", nId).One(topic)
+	if err != nil {
+		return nil, err
+	}
+
+	topic.Views++
+
+	_, err = o.Update(topic)
+	if err != nil {
+		return nil, err
+	}
+
+	return topic, nil
+}
+
+func ModifyTopic(uId, title, content string) error {
+	nId, err := strconv.ParseInt(uId, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	o := orm.NewOrm()
+
+	//	topic := new(Topic)
+	//	qs := o.QueryTable("topic")
+	//	err = qs.Filter("id", nId).One(topic)
+	//	if err != nil {
+	//		return err
+	//	}
+
+	//	topic.Title = title
+	//	topic.Content = content
+	//	timestamp := time.Now().Unix()
+	//	tm := time.Unix(timestamp, 0)
+	//	topic.Updated = tm.Format("2006-01-02 15:04:05")
+
+	//	o.Update(topic)
+
+	topic := &Topic{Id: nId}
+	err = o.Read(topic)
+	if err != nil {
+		return err
+	}
+	topic.Title = title
+	topic.Content = content
+	timetamp := time.Now().Unix()
+	tm := time.Unix(timetamp, 0)
+	topic.Updated = tm.Format("2006-01-02 15:04:05")
+	o.Update(topic)
+	return nil
+}
+
+func DelTopic(tId string) error {
+	nId, err := strconv.ParseInt(tId, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	o := orm.NewOrm()
+
+	topic := &Topic{Id: nId}
+	_, err = o.Delete(topic)
+	if err != nil {
+		return err
+	}
+	return nil
+}

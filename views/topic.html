@@ -22,10 +22,14 @@
 			{{range .Topics}}
 				<tr>
 					<td>{{.Id}}</td>	
-					<td>{{.Title}}</td>
+					<td><a href="/topic/view/{{.Id}}">{{.Title}}</a></td>
 					<td>{{.Updated}}</td>
 					<td>{{.Views}}</td>
 					<td>{{.ReplyCount}}</td>
+					
+						<td><a href="/topic/delete?tid={{.Id}}">删除</a></td>
+					
+						
 				</tr>
 			{{end}}
 		</tbody>

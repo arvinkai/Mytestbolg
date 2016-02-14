@@ -1,0 +1,20 @@
+{{template "header" .}}
+	<title>{{.Topic.Title}}</title>
+</head>
+<body>
+	{{template "navbar" .}}
+
+<div class="container">
+
+<h1>{{.Topic.Title}}</h1>
+<a href="/topic/modify?tid={{.tId}}" class="btn btn-default">修改文章</a><br/>
+{{.Topic.Content}}
+
+</div>
+	
+	
+
+	<script type="text/javascript" src="http://cdn.staticfile.org/jquery/3.0.0-alpha1/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+</body>
+</html>
