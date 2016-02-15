@@ -36,14 +36,18 @@ func (this *TopicController) Post() {
 	title := this.Input().Get("title")
 	content := this.Input().Get("content")
 
-	if "0" != tId {
+	if "" != tId {
 		err := models.ModifyTopic(tId, title, content)
 		if err != nil {
+			beego.Error(err)
+			this.Redirect("/", 302)
 			return
 		}
 	} else {
 		err := models.AddTopic(title, content)
 		if err != nil {
+			beego.Error(err)
+			this.Redirect("/", 302)
 			return
 		}
 	}

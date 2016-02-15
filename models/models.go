@@ -41,7 +41,7 @@ type Topic struct {
 func RegistDB() {
 	orm.RegisterModel(new(Category), new(Topic))
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", "root:arvin@(192.168.80.154:3306)/test?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", "root:arvin@(127.0.0.1:3306)/test?charset=utf8")
 }
 
 func AddCategory(name string) error {
