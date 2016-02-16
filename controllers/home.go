@@ -14,11 +14,17 @@ func (this *MainController) Get() {
 	this.Data["IsHome"] = true
 	this.Data["IsLogin"] = checkAccount(this.Ctx)
 	this.TplName = "home.html"
-	topics, err := models.GetAllTopics(true)
+	topics, err := models.GetAllTopics(this.Input().Get("cate"), true)
 	if err != nil {
 		beego.Error(err.Error())
 	} else {
 		this.Data["Topics"] = topics
+	}
+	category, err := models.GetAllCategories()
+	if err != nil {
+		beego.Error(err.Error())
+	} else {
+		this.Data["Categorys"] = category
 	}
 	return
 }

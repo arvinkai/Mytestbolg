@@ -14,7 +14,7 @@ func (this *TopicController) Get() {
 	this.Data["IsLogin"] = checkAccount(this.Ctx)
 	this.Data["IsTopic"] = true
 	this.TplName = "topic.html"
-	topics, err := models.GetAllTopics(true)
+	topics, err := models.GetAllTopics("", true)
 	if err != nil {
 		beego.Error(err.Error())
 	} else {
@@ -35,6 +35,7 @@ func (this *TopicController) Post() {
 	tId := this.Input().Get("tid")
 	title := this.Input().Get("title")
 	content := this.Input().Get("content")
+	category := this.Input().Get("cate")
 
 	if "" != tId {
 		err := models.ModifyTopic(tId, title, content)
@@ -44,7 +45,7 @@ func (this *TopicController) Post() {
 			return
 		}
 	} else {
-		err := models.AddTopic(title, content)
+		err := models.AddTopic(title, content, category)
 		if err != nil {
 			beego.Error(err)
 			this.Redirect("/", 302)
@@ -69,6 +70,14 @@ func (this *TopicController) View() {
 	this.Data["Topic"] = topic
 	this.Data["tId"] = tId //this.Ctx.Input.Param("0")
 	this.Data["admin"] = checkAccount(this.Ctx)
+
+	replys, err := models.GetAllReplys(tId, true)
+	if err != nil {
+		beego.Error(err)
+		this.Redirect("/", 302)
+		return
+	}
+	this.Data["Replys"] = replys
 }
 
 func (this *TopicController) Modify() {

@@ -36,10 +36,18 @@ type Topic struct {
 	ReplyCount       int64
 	ReplyTime        string `orm:"index"`
 	RepleyLastUserId int64
+	Category         string
+}
+type Reply struct {
+	Id         int64
+	Tid        int64
+	Nickname   string
+	Content    string
+	Createtime string
 }
 
 func RegistDB() {
-	orm.RegisterModel(new(Category), new(Topic))
+	orm.RegisterModel(new(Category), new(Topic), new(Reply))
 	orm.RegisterDriver("mysql", orm.DRMySQL)
 	orm.RegisterDataBase("default", "mysql", "root:arvin@(127.0.0.1:3306)/test?charset=utf8")
 }
@@ -90,7 +98,7 @@ func DelCategory(id string) error {
 	return nil
 }
 
-func AddTopic(title, content string) error {
+func AddTopic(title, content, category string) error {
 	o := orm.NewOrm()
 	timestamp := time.Now().Unix()
 	tm := time.Unix(timestamp, 0)
@@ -102,6 +110,7 @@ func AddTopic(title, content string) error {
 		Created:   s,
 		Updated:   s,
 		ReplyTime: s,
+		Category:  category,
 	}
 
 	_, err := o.Insert(topic)
@@ -109,7 +118,7 @@ func AddTopic(title, content string) error {
 	return err
 }
 
-func GetAllTopics(isDesc bool) ([]*Topic, error) {
+func GetAllTopics(cate string, isDesc bool) ([]*Topic, error) {
 	o := orm.NewOrm()
 
 	Topics := make([]*Topic, 0)
@@ -118,6 +127,9 @@ func GetAllTopics(isDesc bool) ([]*Topic, error) {
 
 	var err error
 	if isDesc {
+		if len(cate) > 0 {
+			qs = qs.Filter("category", cate)
+		}
 		_, err = qs.OrderBy("-created").All(&Topics)
 	} else {
 		_, err = qs.All(&Topics)
@@ -202,4 +214,60 @@ func DelTopic(tId string) error {
 		return err
 	}
 	return nil
+}
+
+func AddReply(tId, nick, content string) error {
+	tIdnum, err := strconv.ParseInt(tId, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	timetamp := time.Now().Unix()
+	tm := time.Unix(timetamp, 0)
+
+	reply := &Reply{Tid: tIdnum, Nickname: nick, Content: content, Createtime: tm.Format("2006-01-02 15:04:05")}
+	o := orm.NewOrm()
+	_, err = o.Insert(reply)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func GetAllReplys(tId string, IsDesc bool) ([]*Reply, error) {
+	tIdnum, err := strconv.ParseInt(tId, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	replys := make([]*Reply, 0)
+
+	o := orm.NewOrm()
+
+	qs := o.QueryTable("reply")
+
+	if IsDesc {
+		qs.OrderBy("-createtime").All(&replys)
+	} else {
+		_, err = qs.Filter("tid", tIdnum).All(&replys)
+		if err != nil {
+			return nil, err
+		}
+
+	}
+
+	return replys, nil
+}
+
+func DelReply(id string) error {
+	idNum, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	reply := &Reply{Id: idNum}
+	o := orm.NewOrm()
+	_, err = o.Delete(reply)
+	return err
 }

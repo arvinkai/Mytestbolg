@@ -7,22 +7,24 @@
 <div class="container">
 
 <h1>{{.Topic.Title}}</h1>
-<a href="/topic/modify?tid={{.tId}}" class="btn btn-default">修改文章</a><br/>
+<a href="/topic/modify?tid={{.tId}}">修改文章</a>
+<br/>
 {{.Topic.Content}}
 </div>
-
+<HR>
 <div class="container">
-	{{range .Reply}}
-		<tr>
-			<h2>{{.Title}}</h2>
-			<h5>{{.Content}}</h5><br/>
-		</tr>
+	{{range .Replys}}
+			<h5>{{.Nickname}}</h5>
+			 <a href="/reply/delete?id={{.Id}}&tid={{.Tid}}">删除</a><br/>
+			{{.Content}}
+			<HR align=center width=300 color=#987cb9 SIZE=1>
 	{{end}}
 </div>
 
 <div class="container">
-	<h3>本文回复</h3>
-	<form method="post" action="reply/add">
+	
+<h4>回复</h4>
+	<form method="post" action="/reply/add">
 		<input type="hidden" name="tid" value="{{.Topic.Id}}">
 		<div class="form-group">
 			<label>显示昵称：</label>
@@ -31,9 +33,7 @@
 
 		<div class="form-group">
 			<label>内容：</label>
-			<textarea name="content" id="" cols="30" rows="10" class="form-control">
-				
-			</textarea>
+			<textarea name="content" cols="30" rows="10" class="form-control"></textarea>
 		</div>
 
 		<button class="btn btn-default">提交回复</button>
