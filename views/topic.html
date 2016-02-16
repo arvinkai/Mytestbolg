@@ -19,6 +19,7 @@
 		</thead>
 		
 		<tbody>
+			{{$IsShow := .IsLogin}}
 			{{range .Topics}}
 				<tr>
 					<td>{{.Id}}</td>	
@@ -26,7 +27,9 @@
 					<td>{{.Updated}}</td>
 					<td>{{.Views}}</td>
 					<td>{{.ReplyCount}}</td>
+					{{if $IsShow}}
 					<td><a href="/topic/delete?tid={{.Id}}">删除</a></td>
+					{{end}}
 				</tr>
 			{{end}}
 		</tbody>

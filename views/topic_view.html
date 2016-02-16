@@ -13,9 +13,12 @@
 </div>
 <HR>
 <div class="container">
+	{{$IsAdmin := .IsLogin}}
 	{{range .Replys}}
 			<h5>{{.Nickname}}</h5>
+			{{if $IsAdmin}}
 			 <a href="/reply/delete?id={{.Id}}&tid={{.Tid}}">删除</a><br/>
+			{{end}}
 			{{.Content}}
 			<HR align=center width=300 color=#987cb9 SIZE=1>
 	{{end}}

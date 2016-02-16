@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -47,9 +48,11 @@ type Reply struct {
 }
 
 func RegistDB() {
+	host := beego.AppConfig.String("DBhost")
+	dataSource := "root:arvin@(" + host + ":3306)/test?charset=utf8"
 	orm.RegisterModel(new(Category), new(Topic), new(Reply))
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", "root:arvin@(127.0.0.1:3306)/test?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", dataSource)
 }
 
 func AddCategory(name string) error {
@@ -98,7 +101,7 @@ func DelCategory(id string) error {
 	return nil
 }
 
-func AddTopic(title, content, category string) error {
+func AddTopic(title, content, cateTitle string) error {
 	o := orm.NewOrm()
 	timestamp := time.Now().Unix()
 	tm := time.Unix(timestamp, 0)
@@ -110,11 +113,15 @@ func AddTopic(title, content, category string) error {
 		Created:   s,
 		Updated:   s,
 		ReplyTime: s,
-		Category:  category,
+		Category:  cateTitle,
 	}
 
 	_, err := o.Insert(topic)
 
+	if err != nil {
+		return err
+	}
+	UpdateCategoryCount(cateTitle, "add")
 	return err
 }
 
@@ -170,22 +177,6 @@ func ModifyTopic(uId, title, content string) error {
 	}
 
 	o := orm.NewOrm()
-
-	//	topic := new(Topic)
-	//	qs := o.QueryTable("topic")
-	//	err = qs.Filter("id", nId).One(topic)
-	//	if err != nil {
-	//		return err
-	//	}
-
-	//	topic.Title = title
-	//	topic.Content = content
-	//	timestamp := time.Now().Unix()
-	//	tm := time.Unix(timestamp, 0)
-	//	topic.Updated = tm.Format("2006-01-02 15:04:05")
-
-	//	o.Update(topic)
-
 	topic := &Topic{Id: nId}
 	err = o.Read(topic)
 	if err != nil {
@@ -209,10 +200,13 @@ func DelTopic(tId string) error {
 	o := orm.NewOrm()
 
 	topic := &Topic{Id: nId}
+	o.Read(topic)
 	_, err = o.Delete(topic)
 	if err != nil {
 		return err
 	}
+
+	UpdateCategoryCount(topic.Category, "del")
 	return nil
 }
 
@@ -270,4 +264,35 @@ func DelReply(id string) error {
 	o := orm.NewOrm()
 	_, err = o.Delete(reply)
 	return err
+}
+
+func UpdateCategoryCount(cateTitle, op string) error {
+	o := orm.NewOrm()
+	switch op {
+	case "add":
+		{
+			cate := &Category{}
+
+			qs := o.QueryTable("category")
+			err := qs.Filter("title", cateTitle).One(cate)
+			if err != nil {
+				return err
+			}
+			cate.TopicCount++
+			_, err = o.Update(cate)
+		}
+	case "del":
+		{
+			cate := &Category{}
+
+			qs := o.QueryTable("category")
+			err := qs.Filter("title", cateTitle).One(cate)
+			if err != nil {
+				return err
+			}
+			cate.TopicCount--
+			_, err = o.Update(cate)
+		}
+	}
+	return nil
 }

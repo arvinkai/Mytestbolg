@@ -69,7 +69,7 @@ func (this *TopicController) View() {
 	}
 	this.Data["Topic"] = topic
 	this.Data["tId"] = tId //this.Ctx.Input.Param("0")
-	this.Data["admin"] = checkAccount(this.Ctx)
+	this.Data["IsLogin"] = checkAccount(this.Ctx)
 
 	replys, err := models.GetAllReplys(tId, true)
 	if err != nil {
